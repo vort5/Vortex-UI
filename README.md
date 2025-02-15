@@ -1,5 +1,4 @@
-# Vortex UI Library
-## Documentation
+# Vortex UI Library Documentation
 
 # Features
 • Built for mobile / Mobile Friendly
@@ -58,6 +57,10 @@ end)
 ```
 Tab:CreateLabel("This is a label")
 ```
+
+
+
+
 
 # Full Example Usage
 ```
