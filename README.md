@@ -76,7 +76,7 @@ Tab:CreateButton("Button", function()
 end)
 
 local Tab2 = Window:CreateTab("Tab 2")
-local Section = Tab:CreateSection("Section 2")
+local Section = Tab2:CreateSection("Section 2")
 
 Tab2:CreateToggle("Toggle", false, function(state)
     print("Toggle:", state)
