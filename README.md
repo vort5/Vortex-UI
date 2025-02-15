@@ -1,5 +1,4 @@
-# Vortex UI Library
-Documentation
+# Vortex UI Library Documentation
 
 # Features
 • Built for mobile / Mobile Friendly
@@ -14,3 +13,5 @@ keybind to hide ui for pc users
 custom themes
 dropdowns (maybe)
 
+# Getting Loadstring
+```local VortexUI loadstring(game:HttpGet("placeholder"))()```
