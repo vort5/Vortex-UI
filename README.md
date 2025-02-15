@@ -14,7 +14,6 @@ custom themes
 dropdowns (maybe)
 
 # Getting Loadstring
-```local VortexUI loadstring(game:HttpGet("placeholder"))()```
-
-# Creating a Window
-```local Window = VortexUI.new("Window Title")```
+```
+local VortexUI loadstring(game:HttpGet("placeholder"))()
+```
