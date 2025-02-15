@@ -2,7 +2,10 @@
 
 # Features
 • Built for mobile / Mobile Friendly
-• Built in draggable button to make ui reappear upon tap when ui is hidden
+
+• Built in draggable button to make ui reappear upon 
+tap when ui is hidden
+
 • Smooth Animations with a purple theme to the ui
 
 # Update Log
