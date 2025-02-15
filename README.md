@@ -17,7 +17,7 @@ dropdowns (maybe)
 
 # Getting Loadstring
 ```
-local VortexUI = loadstring(game:HttpGet("placeholder"))()
+local VortexUI = loadstring(game:HttpGet("https://pastebin.com/raw/59cpHaFC"))()
 ```
 
 # Creating a Window
@@ -63,7 +63,7 @@ Tab:CreateLabel("This is a label")
 
 # Full Example Usage
 ```
-local VortexUI = loadstring(game:HttpGet("placeholder"))()
+local VortexUI = loadstring(game:HttpGet("https://pastebin.com/raw/59cpHaFC"))()
 local Window = VortexUI.new("Example Usage")
 
 local Tab = Window:CreateTab("Tab 1")
