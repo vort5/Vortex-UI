@@ -14,4 +14,4 @@ custom themes
 dropdowns (maybe)
 
 # Getting Loadstring
-```local VortexUI loadstring(game:HttpGet("placeholder"))()```
+```local VortexUI loadstring(game:HttpGet("placeholder"))()
