@@ -5,7 +5,7 @@
 • Built in draggable button to make ui reappear upon tap when ui is hidden
 • Smooth Animations with a purple theme to the ui
 
-#Update Log
+# Update Log
 2/15/25: initial test
 
 next update: keybind to hide ui for pc users
@@ -57,10 +57,6 @@ end)
 ```
 Tab:CreateLabel("This is a label")
 ```
-
-
-
-
 
 # Full Example Usage
 ```
