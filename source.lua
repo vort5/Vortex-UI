@@ -580,13 +580,13 @@ local toggleCorner = Instance.new("UICorner")
             
             return sectionFrame
         end
-        
-function tab:CreateDropdown(text, options, default, callback)
+
+        function tab:CreateDropdown(text, options, default, callback)
     local dropdownFrame = Instance.new("Frame")
     dropdownFrame.Name = text .. "Dropdown"
     dropdownFrame.Size = UDim2.new(1, 0, 0, 35) -- Initial collapsed size
     dropdownFrame.BackgroundColor3 = THEME.SECONDARY
-    dropdownFrame.ClipsDescendants = true -- Important for smooth animation
+    dropdownFrame.ClipsDescendants = true
     dropdownFrame.Parent = tabContent
     
     storeOriginalProperties(dropdownFrame)
@@ -602,7 +602,7 @@ function tab:CreateDropdown(text, options, default, callback)
     headerFrame.Parent = dropdownFrame
     
     local dropdownLabel = Instance.new("TextLabel")
-    dropdownLabel.Size = UDim2.new(1, -40, 1, 0)
+    dropdownLabel.Size = UDim2.new(0.5, -10, 1, 0) -- Modified size
     dropdownLabel.Position = UDim2.new(0, 10, 0, 0)
     dropdownLabel.BackgroundTransparency = 1
     dropdownLabel.Text = text
@@ -615,7 +615,7 @@ function tab:CreateDropdown(text, options, default, callback)
     storeOriginalProperties(dropdownLabel)
     
     local selectedLabel = Instance.new("TextLabel")
-    selectedLabel.Size = UDim2.new(0.5, -10, 1, 0)
+    selectedLabel.Size = UDim2.new(0.4, 0, 1, 0) -- Modified size
     selectedLabel.Position = UDim2.new(0.5, 0, 0, 0)
     selectedLabel.BackgroundTransparency = 1
     selectedLabel.Text = default or "Select..."
@@ -705,43 +705,16 @@ function tab:CreateDropdown(text, options, default, callback)
         optionButton.MouseButton1Click:Connect(function()
             selected = option
             selectedLabel.Text = selected
-            isOpen = false
-            updateDropdown()
             if callback then
                 callback(selected)
             end
         end)
     end
     
-    -- Toggle dropdown
+    -- Toggle dropdown only with arrow
     toggleArrow.MouseButton1Click:Connect(function()
         isOpen = not isOpen
         updateDropdown()
-    end)
-    
-    headerFrame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or
-           input.UserInputType == Enum.UserInputType.Touch then
-            isOpen = not isOpen
-            updateDropdown()
-        end
-    end)
-    
-    -- Close dropdown when clicking outside
-    UserInputService.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or
-           input.UserInputType == Enum.UserInputType.Touch then
-            local position = input.Position
-            local inBounds = position.X >= dropdownFrame.AbsolutePosition.X and
-                           position.X <= dropdownFrame.AbsolutePosition.X + dropdownFrame.AbsoluteSize.X and
-                           position.Y >= dropdownFrame.AbsolutePosition.Y and
-                           position.Y <= dropdownFrame.AbsolutePosition.Y + dropdownFrame.AbsoluteSize.Y
-            
-            if not inBounds and isOpen then
-                isOpen = false
-                updateDropdown()
-            end
-        end
     end)
     
     -- API
@@ -765,7 +738,6 @@ function tab:CreateDropdown(text, options, default, callback)
             
             -- Recreate options
             for i, option in ipairs(options) do
-                -- (Copy the option button creation code from above)
                 local optionButton = Instance.new("TextButton")
                 optionButton.Name = option .. "Option"
                 optionButton.Size = UDim2.new(1, 0, 0, 25)
@@ -777,7 +749,6 @@ function tab:CreateDropdown(text, options, default, callback)
                 optionButton.Font = Enum.Font.Gotham
                 optionButton.Parent = optionsFrame
                 
-                -- (Continue with the rest of the option button setup)
                 local optionCorner = Instance.new("UICorner")
                 optionCorner.CornerRadius = UDim.new(0, 4)
                 optionCorner.Parent = optionButton
@@ -799,8 +770,6 @@ function tab:CreateDropdown(text, options, default, callback)
                 optionButton.MouseButton1Click:Connect(function()
                     selected = option
                     selectedLabel.Text = selected
-                    isOpen = false
-                    updateDropdown()
                     if callback then
                         callback(selected)
                     end
@@ -823,7 +792,7 @@ function tab:CreateDropdown(text, options, default, callback)
     
     return dropdownAPI
         end
-        
+                           
         tabButton.MouseButton1Click:Connect(function()
             tab:Select()
         end)
