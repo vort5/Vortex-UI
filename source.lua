@@ -580,7 +580,250 @@ local toggleCorner = Instance.new("UICorner")
             
             return sectionFrame
         end
-
+        
+function tab:CreateDropdown(text, options, default, callback)
+    local dropdownFrame = Instance.new("Frame")
+    dropdownFrame.Name = text .. "Dropdown"
+    dropdownFrame.Size = UDim2.new(1, 0, 0, 35) -- Initial collapsed size
+    dropdownFrame.BackgroundColor3 = THEME.SECONDARY
+    dropdownFrame.ClipsDescendants = true -- Important for smooth animation
+    dropdownFrame.Parent = tabContent
+    
+    storeOriginalProperties(dropdownFrame)
+    
+    local dropdownCorner = Instance.new("UICorner")
+    dropdownCorner.CornerRadius = UDim.new(0, 6)
+    dropdownCorner.Parent = dropdownFrame
+    
+    local headerFrame = Instance.new("Frame")
+    headerFrame.Name = "Header"
+    headerFrame.Size = UDim2.new(1, 0, 0, 35)
+    headerFrame.BackgroundTransparency = 1
+    headerFrame.Parent = dropdownFrame
+    
+    local dropdownLabel = Instance.new("TextLabel")
+    dropdownLabel.Size = UDim2.new(1, -40, 1, 0)
+    dropdownLabel.Position = UDim2.new(0, 10, 0, 0)
+    dropdownLabel.BackgroundTransparency = 1
+    dropdownLabel.Text = text
+    dropdownLabel.TextColor3 = THEME.TEXT
+    dropdownLabel.TextSize = 14
+    dropdownLabel.Font = Enum.Font.Gotham
+    dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
+    dropdownLabel.Parent = headerFrame
+    
+    storeOriginalProperties(dropdownLabel)
+    
+    local selectedLabel = Instance.new("TextLabel")
+    selectedLabel.Size = UDim2.new(0.5, -10, 1, 0)
+    selectedLabel.Position = UDim2.new(0.5, 0, 0, 0)
+    selectedLabel.BackgroundTransparency = 1
+    selectedLabel.Text = default or "Select..."
+    selectedLabel.TextColor3 = THEME.ACCENT
+    selectedLabel.TextSize = 14
+    selectedLabel.Font = Enum.Font.Gotham
+    selectedLabel.TextXAlignment = Enum.TextXAlignment.Right
+    selectedLabel.Parent = headerFrame
+    
+    storeOriginalProperties(selectedLabel)
+    
+    local toggleArrow = Instance.new("TextButton")
+    toggleArrow.Size = UDim2.new(0, 35, 0, 35)
+    toggleArrow.Position = UDim2.new(1, -35, 0, 0)
+    toggleArrow.BackgroundTransparency = 1
+    toggleArrow.Text = "▼"
+    toggleArrow.TextColor3 = THEME.TEXT
+    toggleArrow.TextSize = 14
+    toggleArrow.Font = Enum.Font.GothamBold
+    toggleArrow.Parent = headerFrame
+    
+    storeOriginalProperties(toggleArrow)
+    
+    local optionsFrame = Instance.new("Frame")
+    optionsFrame.Name = "Options"
+    optionsFrame.Size = UDim2.new(1, -20, 0, (#options * 30))
+    optionsFrame.Position = UDim2.new(0, 10, 0, 40)
+    optionsFrame.BackgroundTransparency = 1
+    optionsFrame.Parent = dropdownFrame
+    
+    local optionsList = Instance.new("UIListLayout")
+    optionsList.SortOrder = Enum.SortOrder.LayoutOrder
+    optionsList.Padding = UDim.new(0, 5)
+    optionsList.Parent = optionsFrame
+    
+    local isOpen = false
+    local selected = default
+    
+    local function updateDropdown()
+        local targetSize = isOpen and UDim2.new(1, 0, 0, 45 + (#options * 30)) or UDim2.new(1, 0, 0, 35)
+        local targetRotation = isOpen and 180 or 0
+        
+        TweenService:Create(dropdownFrame, ANIMS.SLIDE, {
+            Size = targetSize
+        }):Play()
+        
+        TweenService:Create(toggleArrow, ANIMS.SLIDE, {
+            Rotation = targetRotation
+        }):Play()
+    end
+    
+    -- Create option buttons
+    for i, option in ipairs(options) do
+        local optionButton = Instance.new("TextButton")
+        optionButton.Name = option .. "Option"
+        optionButton.Size = UDim2.new(1, 0, 0, 25)
+        optionButton.BackgroundColor3 = THEME.ACCENT
+        optionButton.BackgroundTransparency = 0.8
+        optionButton.Text = option
+        optionButton.TextColor3 = THEME.TEXT
+        optionButton.TextSize = 14
+        optionButton.Font = Enum.Font.Gotham
+        optionButton.Parent = optionsFrame
+        
+        storeOriginalProperties(optionButton)
+        
+        local optionCorner = Instance.new("UICorner")
+        optionCorner.CornerRadius = UDim.new(0, 4)
+        optionCorner.Parent = optionButton
+        
+        -- Option hover effect
+        optionButton.MouseEnter:Connect(function()
+            TweenService:Create(optionButton, ANIMS.FADE, {
+                BackgroundTransparency = 0.6,
+                BackgroundColor3 = THEME.HOVER
+            }):Play()
+        end)
+        
+        optionButton.MouseLeave:Connect(function()
+            TweenService:Create(optionButton, ANIMS.FADE, {
+                BackgroundTransparency = 0.8,
+                BackgroundColor3 = THEME.ACCENT
+            }):Play()
+        end)
+        
+        -- Option selection
+        optionButton.MouseButton1Click:Connect(function()
+            selected = option
+            selectedLabel.Text = selected
+            isOpen = false
+            updateDropdown()
+            if callback then
+                callback(selected)
+            end
+        end)
+    end
+    
+    -- Toggle dropdown
+    toggleArrow.MouseButton1Click:Connect(function()
+        isOpen = not isOpen
+        updateDropdown()
+    end)
+    
+    headerFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or
+           input.UserInputType == Enum.UserInputType.Touch then
+            isOpen = not isOpen
+            updateDropdown()
+        end
+    end)
+    
+    -- Close dropdown when clicking outside
+    UserInputService.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or
+           input.UserInputType == Enum.UserInputType.Touch then
+            local position = input.Position
+            local inBounds = position.X >= dropdownFrame.AbsolutePosition.X and
+                           position.X <= dropdownFrame.AbsolutePosition.X + dropdownFrame.AbsoluteSize.X and
+                           position.Y >= dropdownFrame.AbsolutePosition.Y and
+                           position.Y <= dropdownFrame.AbsolutePosition.Y + dropdownFrame.AbsoluteSize.Y
+            
+            if not inBounds and isOpen then
+                isOpen = false
+                updateDropdown()
+            end
+        end
+    end)
+    
+    -- API
+    local dropdownAPI = {
+        Frame = dropdownFrame,
+        SetOptions = function(newOptions)
+            -- Clear existing options
+            for _, child in pairs(optionsFrame:GetChildren()) do
+                if child:IsA("TextButton") then
+                    child:Destroy()
+                end
+            end
+            
+            options = newOptions
+            
+            -- Update frame sizes
+            optionsFrame.Size = UDim2.new(1, -20, 0, (#options * 30))
+            if isOpen then
+                dropdownFrame.Size = UDim2.new(1, 0, 0, 45 + (#options * 30))
+            end
+            
+            -- Recreate options
+            for i, option in ipairs(options) do
+                -- (Copy the option button creation code from above)
+                local optionButton = Instance.new("TextButton")
+                optionButton.Name = option .. "Option"
+                optionButton.Size = UDim2.new(1, 0, 0, 25)
+                optionButton.BackgroundColor3 = THEME.ACCENT
+                optionButton.BackgroundTransparency = 0.8
+                optionButton.Text = option
+                optionButton.TextColor3 = THEME.TEXT
+                optionButton.TextSize = 14
+                optionButton.Font = Enum.Font.Gotham
+                optionButton.Parent = optionsFrame
+                
+                -- (Continue with the rest of the option button setup)
+                local optionCorner = Instance.new("UICorner")
+                optionCorner.CornerRadius = UDim.new(0, 4)
+                optionCorner.Parent = optionButton
+                
+                optionButton.MouseEnter:Connect(function()
+                    TweenService:Create(optionButton, ANIMS.FADE, {
+                        BackgroundTransparency = 0.6,
+                        BackgroundColor3 = THEME.HOVER
+                    }):Play()
+                end)
+                
+                optionButton.MouseLeave:Connect(function()
+                    TweenService:Create(optionButton, ANIMS.FADE, {
+                        BackgroundTransparency = 0.8,
+                        BackgroundColor3 = THEME.ACCENT
+                    }):Play()
+                end)
+                
+                optionButton.MouseButton1Click:Connect(function()
+                    selected = option
+                    selectedLabel.Text = selected
+                    isOpen = false
+                    updateDropdown()
+                    if callback then
+                        callback(selected)
+                    end
+                end)
+            end
+        end,
+        GetSelected = function()
+            return selected
+        end,
+        SetSelected = function(option)
+            if table.find(options, option) then
+                selected = option
+                selectedLabel.Text = selected
+                if callback then
+                    callback(selected)
+                end
+            end
+        end
+    }
+    
+    return dropdownAPI
+        end
+        
         tabButton.MouseButton1Click:Connect(function()
             tab:Select()
         end)
