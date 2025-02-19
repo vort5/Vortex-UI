@@ -696,65 +696,229 @@ function tab:CreateDropdown(text, options, default, callback)
                 callback(optionText)
             end
         end)
-        
-        return option
-    end
+function tab:CreateDropdown(text, options, default, callback)
+    -- Input validation
+    assert(type(options) == "table" and #options > 0, "Options must be a non-empty table")
+    default = default or options[1]
+    assert(table.find(options, default), "Default value must be one of the options")
+
+    -- Set up container
+    local dropFrame = Instance.new("Frame")
+    dropFrame.Name = text .. "Dropdown"
+    dropFrame.Size = UDim2.new(1, 0, 0, 35)
+    dropFrame.BackgroundColor3 = THEME.SECONDARY
+    dropFrame.Parent = tabContent
     
-    -- Create all option buttons
-    for _, optionText in ipairs(options) do
-        createOption(optionText)
-    end
+    storeOriginalProperties(dropFrame)
     
-    -- Toggle dropdown
+    Instance.new("UICorner", dropFrame).CornerRadius = UDim.new(0, 6)
+
+    -- Label
+    local label = Instance.new("TextLabel")
+    label.Text = text
+    label.Size = UDim2.new(0.5, 0, 1, 0)
+    label.Position = UDim2.new(0, 10, 0, 0)
+    label.BackgroundTransparency = 1
+    label.TextColor3 = THEME.TEXT
+    label.TextSize = 14
+    label.Font = Enum.Font.Gotham
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = dropFrame
+
+    -- Selected value button with shadow
+    local selectedBtn = Instance.new("TextButton")
+    selectedBtn.Size = UDim2.new(0, 120, 0, 25)
+    selectedBtn.Position = UDim2.new(1, -130, 0.5, -12)
+    selectedBtn.BackgroundColor3 = THEME.ACCENT
+    selectedBtn.Text = default
+    selectedBtn.TextColor3 = THEME.TEXT
+    selectedBtn.TextSize = 12
+    selectedBtn.Font = Enum.Font.Gotham
+    selectedBtn.Parent = dropFrame
+    
+    Instance.new("UICorner", selectedBtn).CornerRadius = UDim.new(0, 4)
+
+    -- Arrow indicator
+    local arrow = Instance.new("TextLabel")
+    arrow.Size = UDim2.new(0, 25, 0, 25)
+    arrow.Position = UDim2.new(1, -25, 0, 0)
+    arrow.BackgroundTransparency = 1
+    arrow.Text = "▼"
+    arrow.TextColor3 = THEME.TEXT
+    arrow.TextSize = 12
+    arrow.Font = Enum.Font.Gotham
+    arrow.Parent = selectedBtn
+
+    -- Options list with nice shadow
+    local optionList = Instance.new("Frame")
+    optionList.Size = UDim2.new(0, 120, 0, 0)
+    optionList.Position = UDim2.new(1, -130, 1, 5)
+    optionList.BackgroundColor3 = THEME.ACCENT
+    optionList.ClipsDescendants = true
+    optionList.Visible = false
+    optionList.ZIndex = 5
+    optionList.Parent = dropFrame
+    
+    Instance.new("UICorner", optionList).CornerRadius = UDim.new(0, 4)
+
+    -- Add shadow effect
+    local shadow = Instance.new("ImageLabel")
+    shadow.Name = "Shadow"
+    shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+    shadow.BackgroundTransparency = 1
+    shadow.Position = UDim2.new(0.5, 0, 0.5, 0)
+    shadow.Size = UDim2.new(1, 30, 1, 30)
+    shadow.ZIndex = 4
+    shadow.Image = "rbxassetid://6014261993"
+    shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+    shadow.ImageTransparency = 0.5
+    shadow.Parent = optionList
+
+    -- Create option buttons with hover effects
+    local function setupOptions()
+        for i, option in ipairs(options) do
+            local optBtn = Instance.new("TextButton")
+            optBtn.Size = UDim2.new(1, 0, 0, 25)
+            optBtn.BackgroundColor3 = THEME.ACCENT
+            optBtn.Text = option
+            optBtn.TextColor3 = THEME.TEXT
+            optBtn.TextSize = 12
+            optBtn.Font = Enum.Font.Gotham
+            optBtn.ZIndex = 6
+            optBtn.Parent = optionList
+
+            -- Hover animation
+            optBtn.MouseEnter:Connect(function()
+                TweenService:Create(optBtn, ANIMS.FADE, {
+                    BackgroundColor3 = THEME.HOVER
+                }):Play()
+            end)
+
+            optBtn.MouseLeave:Connect(function()
+                TweenService:Create(optBtn, ANIMS.FADE, {
+                    BackgroundColor3 = THEME.ACCENT
+                }):Play()
+            end)
+
+            -- Click handler
+            optBtn.MouseButton1Click:Connect(function()
+                selectedBtn.Text = option
+
+                -- Close dropdown with animation
+                TweenService:Create(optionList, ANIMS.FADE, {
+                    Size = UDim2.new(0, 120, 0, 0)
+                }):Play()
+
+                TweenService:Create(arrow, ANIMS.FADE, {
+                    Rotation = 0
+                }):Play()
+
+                task.delay(ANIMS.DURATION, function()
+                    optionList.Visible = false
+                end)
+
+                if callback then
+                    task.spawn(callback, option)
+                end
+            end)
+        end
+    end
+
+    setupOptions()
+
+    -- Toggle dropdown with animations
     local isOpen = false
-    selectedOption.MouseButton1Click:Connect(function()
+    selectedBtn.MouseButton1Click:Connect(function()
         isOpen = not isOpen
+        
         if isOpen then
-            optionsFrame.Visible = true
-            TweenService:Create(optionsFrame, ANIMS.FADE, {
+            optionList.Visible = true
+            TweenService:Create(optionList, ANIMS.FADE, {
                 Size = UDim2.new(0, 120, 0, #options * 25)
             }):Play()
-            TweenService:Create(dropdownArrow, ANIMS.FADE, {
+            TweenService:Create(arrow, ANIMS.FADE, {
                 Rotation = 180
             }):Play()
         else
-            TweenService:Create(optionsFrame, ANIMS.FADE, {
+            TweenService:Create(optionList, ANIMS.FADE, {
                 Size = UDim2.new(0, 120, 0, 0)
             }):Play()
-            TweenService:Create(dropdownArrow, ANIMS.FADE, {
+            TweenService:Create(arrow, ANIMS.FADE, {
                 Rotation = 0
             }):Play()
-            task.wait(ANIMS.DURATION)
-            optionsFrame.Visible = false
+            task.delay(ANIMS.DURATION, function()
+                optionList.Visible = false
+            end)
         end
     end)
-    
-    -- Close dropdown when clicking outside
+
+    -- Close when clicking outside
     UserInputService.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or
-           input.UserInputType == Enum.UserInputType.Touch then
-            local position = input.Position
-            local inFrame = position.X >= optionsFrame.AbsolutePosition.X and
-                          position.X <= optionsFrame.AbsolutePosition.X + optionsFrame.AbsoluteSize.X and
-                          position.Y >= optionsFrame.AbsolutePosition.Y and
-                          position.Y <= optionsFrame.AbsolutePosition.Y + optionsFrame.AbsoluteSize.Y
-            
-            if not inFrame and isOpen then
+        if input.UserInputType == Enum.UserInputType.MouseButton1 and isOpen then
+            local mouse = game:GetService("Players").LocalPlayer:GetMouse()
+            if not (mouse.X >= optionList.AbsolutePosition.X and 
+                   mouse.X <= optionList.AbsolutePosition.X + optionList.AbsoluteSize.X and
+                   mouse.Y >= optionList.AbsolutePosition.Y and
+                   mouse.Y <= optionList.AbsolutePosition.Y + optionList.AbsoluteSize.Y) then
                 isOpen = false
-                TweenService:Create(optionsFrame, ANIMS.FADE, {
+                TweenService:Create(optionList, ANIMS.FADE, {
                     Size = UDim2.new(0, 120, 0, 0)
                 }):Play()
-                TweenService:Create(dropdownArrow, ANIMS.FADE, {
+                TweenService:Create(arrow, ANIMS.FADE, {
                     Rotation = 0
                 }):Play()
-                task.wait(ANIMS.DURATION)
-                optionsFrame.Visible = false
+                task.delay(ANIMS.DURATION, function()
+                    optionList.Visible = false
+                end)
             end
         end
     end)
-    
-    return dropdownFrame
+
+    -- Public interface
+    local dropdown = {}
+
+    function dropdown:GetValue()
+        return selectedBtn.Text
+    end
+
+    function dropdown:SetValue(value)
+        if table.find(options, value) then
+            selectedBtn.Text = value
+            if callback then
+                task.spawn(callback, value)
+            end
         end
+        return self
+    end
+
+    function dropdown:SetOptions(newOptions)
+        if #newOptions > 0 then
+            options = newOptions
+            -- Clear existing options
+            for _, child in ipairs(optionList:GetChildren()) do
+                if child:IsA("TextButton") then
+                    child:Destroy()
+                end
+            end
+            setupOptions()
+            -- Reset selected value if it's not in new options
+            if not table.find(newOptions, selectedBtn.Text) then
+                selectedBtn.Text = newOptions[1]
+                if callback then
+                    task.spawn(callback, newOptions[1])
+                end
+            end
+        end
+        return self
+    end
+
+    -- Call callback with default value
+    if callback then
+        task.spawn(callback, default)
+    end
+
+    return dropdown
+end
 
         tabButton.MouseButton1Click:Connect(function()
             tab:Select()
