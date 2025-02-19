@@ -12,7 +12,9 @@ tap when ui is hidden
 2/15/25: initial test
 
 next update: keybind to hide ui for pc users
+
 custom themes
+
 dropdowns (maybe)
 
 # Getting Loadstring
