@@ -9,13 +9,15 @@ tap when ui is hidden
 • Smooth Animations with a purple theme to the ui
 
 # Update Log
-2/15/25: initial test
+2/15/21: initial test
 
-next update: keybind to hide ui for pc users
+next update: 
+
+actual release
 
 custom themes
 
-dropdowns (maybe)
+more pc support like keybinds and stuff
 
 # Getting Loadstring
 ```
