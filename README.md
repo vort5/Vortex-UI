@@ -9,7 +9,7 @@ tap when ui is hidden
 • Smooth Animations with a purple theme to the ui
 
 # Update Log
-2/15/21: initial test
+2/21/25: initial test
 
 next update: 
 
