@@ -58,6 +58,18 @@ Tab:CreateSlider("Slider Text", min, max, default, function(value)
 end)
 ```
 
+# Creating Dropdowns
+```
+Tab:CreateDropdown("Dropdown Name", {
+    "Option 1",
+    "Option 2",
+    "Option 3",
+    "Option 4"
+}, "Option 1", function(selected)
+    print("Selected Option:", selected)
+end)
+```
+
 # Creating Labels
 ```
 Tab:CreateLabel("This is a label")
@@ -86,6 +98,15 @@ end)
 
 Tab2:CreateSlider("Slider", 0, 100, 0, function(value)
     print("Slider Value:", value)
+end)
+
+Tab2:CreateDropdown("Select", {
+    "Apple",
+    "Banana",
+    "Pineapple",
+    "Mango"
+}, "Apple", function(selected)
+    print("Selected:", selected)
 end)
 ```
 
