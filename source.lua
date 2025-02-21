@@ -529,7 +529,7 @@ local toggleCorner = Instance.new("UICorner")
             infoIcon.BackgroundTransparency = 1
             infoIcon.Text = "ⓘ"
             infoIcon.TextColor3 = THEME.TEXT
-            infoIcon.TextSize = 18  -- Increased text size
+            infoIcon.TextSize = 18
             infoIcon.Font = Enum.Font.Gotham
             infoIcon.TextXAlignment = Enum.TextXAlignment.Right
             infoIcon.Parent = labelFrame
@@ -584,7 +584,7 @@ local toggleCorner = Instance.new("UICorner")
         function tab:CreateDropdown(text, options, default, callback)
     local dropdownFrame = Instance.new("Frame")
     dropdownFrame.Name = text .. "Dropdown"
-    dropdownFrame.Size = UDim2.new(1, 0, 0, 35) -- Initial collapsed size
+    dropdownFrame.Size = UDim2.new(1, 0, 0, 35)
     dropdownFrame.BackgroundColor3 = THEME.SECONDARY
     dropdownFrame.ClipsDescendants = true
     dropdownFrame.Parent = tabContent
@@ -602,7 +602,7 @@ local toggleCorner = Instance.new("UICorner")
     headerFrame.Parent = dropdownFrame
     
     local dropdownLabel = Instance.new("TextLabel")
-    dropdownLabel.Size = UDim2.new(0.5, -10, 1, 0) -- Modified size
+    dropdownLabel.Size = UDim2.new(0.5, -10, 1, 0)
     dropdownLabel.Position = UDim2.new(0, 10, 0, 0)
     dropdownLabel.BackgroundTransparency = 1
     dropdownLabel.Text = text
@@ -615,7 +615,7 @@ local toggleCorner = Instance.new("UICorner")
     storeOriginalProperties(dropdownLabel)
     
     local selectedLabel = Instance.new("TextLabel")
-    selectedLabel.Size = UDim2.new(0.4, 0, 1, 0) -- Modified size
+    selectedLabel.Size = UDim2.new(0.4, 0, 1, 0)
     selectedLabel.Position = UDim2.new(0.5, 0, 0, 0)
     selectedLabel.BackgroundTransparency = 1
     selectedLabel.Text = default or "Select..."
@@ -667,7 +667,6 @@ local toggleCorner = Instance.new("UICorner")
         }):Play()
     end
     
-    -- Create option buttons
     for i, option in ipairs(options) do
         local optionButton = Instance.new("TextButton")
         optionButton.Name = option .. "Option"
@@ -701,7 +700,6 @@ local toggleCorner = Instance.new("UICorner")
             }):Play()
         end)
         
-        -- Option selection
         optionButton.MouseButton1Click:Connect(function()
             selected = option
             selectedLabel.Text = selected
@@ -711,17 +709,15 @@ local toggleCorner = Instance.new("UICorner")
         end)
     end
     
-    -- Toggle dropdown only with arrow
     toggleArrow.MouseButton1Click:Connect(function()
         isOpen = not isOpen
         updateDropdown()
     end)
     
-    -- API
     local dropdownAPI = {
         Frame = dropdownFrame,
         SetOptions = function(newOptions)
-            -- Clear existing options
+            
             for _, child in pairs(optionsFrame:GetChildren()) do
                 if child:IsA("TextButton") then
                     child:Destroy()
@@ -730,13 +726,11 @@ local toggleCorner = Instance.new("UICorner")
             
             options = newOptions
             
-            -- Update frame sizes
             optionsFrame.Size = UDim2.new(1, -20, 0, (#options * 30))
             if isOpen then
                 dropdownFrame.Size = UDim2.new(1, 0, 0, 45 + (#options * 30))
             end
             
-            -- Recreate options
             for i, option in ipairs(options) do
                 local optionButton = Instance.new("TextButton")
                 optionButton.Name = option .. "Option"
@@ -799,7 +793,7 @@ local toggleCorner = Instance.new("UICorner")
         
         if #tabs == 0 then
             task.spawn(function()
-                wait() -- Wait for next frame
+                wait()
                 tab:Select()
             end)
         end
