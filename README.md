@@ -21,7 +21,7 @@ more pc support like keybinds and stuff
 
 # Getting Loadstring
 ```
-local VortexUI = loadstring(game:HttpGet("https://pastebin.com/raw/59cpHaFC"))()
+local VortexUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/vort5/Vortex-UI/refs/heads/main/source.lua"))()
 ```
 
 # Creating a Window
